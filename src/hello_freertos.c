@@ -18,12 +18,6 @@
 #define MAIN_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
 #define BLINK_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
 
-void blink (int n);
-char invert_capitalization (char c);
-
-void main_task(__unused void *params);
-void blink_task(__unused void *params);
-
 // Inverts the gpio every call, for a 50% duty cycle. Skips the nth blink
 bool blink (int n) {
     static int count = 0;
