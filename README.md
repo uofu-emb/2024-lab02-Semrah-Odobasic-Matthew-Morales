@@ -1,3 +1,6 @@
+# This is LAB 02 for Semrah Odobasic & Matthew Morales
+Included in the main directory is !TestResults.png which is the output from the unity tests.
+
 # Renode setup
 The Raspberry Pico needs configuration files for Renode to work properly.
 
