@@ -23,7 +23,7 @@
 void blink_task(__unused void *params) {
     hard_assert(cyw43_arch_init() == PICO_OK);
     while (true) {
-        blink(5);
+        cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, blink(5));
         vTaskDelay(500);
     }
 }
