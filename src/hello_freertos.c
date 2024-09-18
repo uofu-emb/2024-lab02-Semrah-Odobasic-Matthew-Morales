@@ -21,6 +21,7 @@ bool on = false;
 #define MAIN_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
 #define BLINK_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
 
+// This code runs in another thread to blink an LED
 void blink_task(__unused void *params) {
     hard_assert(cyw43_arch_init() == PICO_OK);
     while (true) {
@@ -30,6 +31,8 @@ void blink_task(__unused void *params) {
     }
 }
 
+// Inverts capitalization of letters passed through UART over USB or leaves them alone if they are not letters.
+// Creates a new thread running the blink task.
 void main_task(__unused void *params) {
     xTaskCreate(blink_task, "BlinkThread",
                 BLINK_TASK_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
@@ -41,6 +44,7 @@ void main_task(__unused void *params) {
     }
 }
 
+// Spools up a main thread which runs the main class, and starts the scheduler
 int main( void )
 {
     stdio_init_all();
