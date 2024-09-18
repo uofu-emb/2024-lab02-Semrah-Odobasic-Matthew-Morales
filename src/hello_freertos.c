@@ -8,6 +8,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "hello_lib.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
@@ -18,17 +19,6 @@
 #define MAIN_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
 #define BLINK_TASK_STACK_SIZE configMINIMAL_STACK_SIZE
 
-// Inverts the gpio every call, for a 50% duty cycle. Skips the nth blink
-bool blink (int n) {
-    static int count = 0;
-    static bool on = false;
-
-    if (count++ % (n*2+1)) on = !on;
-    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, on);
-
-    return on;
-}
-
 // This code runs in another thread to blink an LED
 void blink_task(__unused void *params) {
     hard_assert(cyw43_arch_init() == PICO_OK);
@@ -36,13 +26,6 @@ void blink_task(__unused void *params) {
         blink(5);
         vTaskDelay(500);
     }
-}
-
-
-char invert_capitalization (char c) {
-    if (c <= 'z' && c >= 'a') return c - 32;
-    else if (c >= 'A' && c <= 'Z') return c + 32;
-    else return c;
 }
 
 // Inverts capitalization of letters passed through UART over USB or leaves them alone if they are not letters.
