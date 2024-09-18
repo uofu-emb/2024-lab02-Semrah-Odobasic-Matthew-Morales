@@ -43,7 +43,7 @@ void test_blink () {
     for(int i = 0 ; i < 100; i++){
         result = blink(11);
         
-        if(i % (11*2+1)) {
+        if(i % (11*2+1) == 0) {
             TEST_ASSERT_EQUAL_INT_MESSAGE(result, result_prev, "Blink should not change output.");
         } else {
             TEST_ASSERT_NOT_EQUAL_INT_MESSAGE(result, result_prev, "Blink should change output.");
@@ -56,11 +56,11 @@ void test_blink () {
 int main (void)
 {
     stdio_init_all();
-    sleep_ms(5000); // Give time for TTY to attach.
+    sleep_ms(10000); // Give time for TTY to attach.
     printf("Start tests\n");
     UNITY_BEGIN();
     RUN_TEST(test_capitalization);
     RUN_TEST(test_blink);
-    sleep_ms(5000);
+    sleep_ms(60000);
     return UNITY_END();
 }

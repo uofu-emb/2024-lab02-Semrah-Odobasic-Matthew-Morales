@@ -1,4 +1,7 @@
-add_executable(mytest test.c unity_config.c)
+add_executable(mytest hello_test.c unity_config.c ../src/hello_lib.c)
+
+# Add the include directory
+target_include_directories(mytest PRIVATE ../src)
 
 target_link_libraries(mytest PRIVATE
   pico_stdlib
