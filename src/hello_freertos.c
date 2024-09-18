@@ -35,13 +35,17 @@ void blink_task(__unused void *params) {
 // Creates a new thread running the blink task.
 void main_task(__unused void *params) {
     xTaskCreate(blink_task, "BlinkThread",
-                BLINK_TASK_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
+            BLINK_TASK_STACK_SIZE, NULL, BLINK_TASK_PRIORITY, NULL);
     char c;
     while(c = getchar()) {
-        if (c <= 'z' && c >= 'a') putchar(c - 32);
-        else if (c >= 'A' && c <= 'Z') putchar(c + 32);
-        else putchar(c);
+        putchar(invert_capitalization(c));
     }
+}
+
+char invert_capitalization (char c) {
+    if (c <= 'z' && c >= 'a') return c - 32;
+    else if (c >= 'A' && c <= 'Z') return c + 32;
+    else return c;
 }
 
 // Spools up a main thread which runs the main class, and starts the scheduler
