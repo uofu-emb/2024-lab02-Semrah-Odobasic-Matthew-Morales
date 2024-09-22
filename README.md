@@ -1,6 +1,8 @@
 # This is LAB 02 for Semrah Odobasic & Matthew Morales
 Included in the main directory is !TestResults.png which is the output from the unity tests.
 
+![example workflow](https://github.com/uofu-emb/2024-lab02-Semrah-Odobasic-Matthew-Morales/actions/workflows/main.yml/badge.svg)
+
 # Renode setup
 The Raspberry Pico needs configuration files for Renode to work properly.
 
