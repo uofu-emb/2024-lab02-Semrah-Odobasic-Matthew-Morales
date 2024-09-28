@@ -37,18 +37,23 @@ void test_capitalization() {
 }
 
 void test_blink () {
+    //Initialize the result variables
     int result = 0;
     int result_prev = 0;
 
+    //Test for the first 100 iterations of blink
     for(int i = 0 ; i < 100; i++){
+        //We made blink more adjustable but we are putting 11 to keep it the same.
         result = blink(11);
         
+        //If the iteration is a multiple of 11*2+1, the result should be the same as the previous iteration.
         if(i % (11*2+1) == 0) {
             TEST_ASSERT_EQUAL_INT_MESSAGE(result, result_prev, "Blink should not change output.");
         } else {
             TEST_ASSERT_NOT_EQUAL_INT_MESSAGE(result, result_prev, "Blink should change output.");
         }
         
+        //Update the previous result so we know if the varbiable is changing in the next call
         result_prev = result;
     }
 }
