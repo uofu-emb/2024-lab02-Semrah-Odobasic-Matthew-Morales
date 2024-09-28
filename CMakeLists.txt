@@ -7,11 +7,26 @@ endif()
 set(sdkVersion 2.0.0)
 set(toolchainVersion 13_2_Rel1)
 set(picotoolVersion 2.0.0)
-if(DEFINED ENV{PICO_SDK_PATH})
+if(EXISTS ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
+    include(${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
+elseif(DEFINED ENV{PICO_SDK_PATH})
     set(PICO_SDK_PATH $ENV{PICO_SDK_PATH})
 else()
-    include(${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
+    set(PICO_SDK_PATH lib/pico-sdk)
 endif()
+
+if(DEFINED ENV{FREERTOS_PATH})
+    set(FREERTOS_PATH $ENV{FREERTOS_PATH})
+else()
+    set(FREERTOS_PATH lib/freertos)
+endif()
+
+if(DEFINED ENV{UNITY_PATH})
+    set(UNITY_PATH $ENV{UNITY_PATH})
+else()
+    set(UNITY_PATH lib/unity)
+endif()
+
 # ====================================================================================
 cmake_minimum_required(VERSION 3.13)
 
@@ -26,9 +41,9 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
 
 # This imports the library configuration for FreeRTOS
-include(lib/freertos/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+include(${FREERTOS_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
-# This sets up the unity library
+# This sets up the unity library. They don't provide a library export, so it's defined locally.
 include(unity.cmake)
 
 # This defines your project name, you can name it anything you want.
@@ -40,44 +55,15 @@ pico_sdk_init()
 # This sets a preprocessor value for use in our code.
 add_compile_definitions(
     configNUMBER_OF_CORES=1
+    PICO_ENTER_USB_BOOT_ON_EXIT=1
     )
 
 # This is where your project header files are located.
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
-# This is the main binary. List your C files here.
-add_executable(myproject
-    src/hello_freertos.c
-    )
-
-pico_set_program_name(myproject "test")
-pico_set_program_version(myproject "0.1")
-
-# Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(myproject 1)
-pico_enable_stdio_usb(myproject 1)
-
-# Add the standard library to the build
-target_link_libraries(myproject PRIVATE
-  pico_stdlib
-  pico_multicore
-  pico_async_context_freertos
-  FreeRTOS-Kernel-Heap4
-)
-
-# The CYW43 is the Wifi/Bluetooth module. If the board is set to pico_w, this
-# variable will be set and the wireless libraries added.
-if(PICO_CYW43_SUPPORTED)
-    # For led support on pico_w
-    target_link_libraries(myproject PRIVATE
-        pico_cyw43_arch_none
-    )
-endif()
-
-# Another pico macro which generates the uf2 file in addition to the elf
-pico_add_extra_outputs(myproject)
-
-include(CTest)
+# The main executable is defined inside the src directory.
+add_subdirectory(src)
 
 # The test configuration is inside the test directory.
+include(CTest)
 add_subdirectory(test)

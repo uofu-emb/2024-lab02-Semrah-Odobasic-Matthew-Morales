@@ -1,4 +1,7 @@
-add_executable(mytest test.c)
+add_executable(mytest hello_test.c unity_config.c ../src/hello_lib.c)
+
+# Add the include directory
+target_include_directories(mytest PRIVATE ../src)
 
 target_link_libraries(mytest PRIVATE
   pico_stdlib
@@ -15,13 +18,15 @@ if(PICO_CYW43_SUPPORTED)
     )
 endif()
 
-# Renode doesn't support the divider accellerator, disable it.
-target_compile_definitions(mytest
-    PRIVATE PICO_EMULATE_DIVIDER=1
-)
+# Modify the below lines to enable/disable output over UART/USB.
+# These are mutually exclusive, only set one.
+pico_enable_stdio_uart(mytest 0)
+pico_enable_stdio_usb(mytest 1)
 
-pico_enable_stdio_uart(mytest 1)
-pico_set_binary_type(mytest no_flash)
+# This will speed up the simulation, since data won't be copied from the flash controller.
+# It does make the binary non-persistent on a real microcontroller.
+# pico_set_binary_type(mytest no_flash)
+
 find_program(RENODE renode
 # This is extra stuff so it can find the mac installation paths.
  NAMES macos_run.command Renode.exe
@@ -37,5 +42,7 @@ set(RENODE_FLAGS
 add_test(NAME simulate_mytest COMMAND
     ${RENODE}
      ${RENODE_FLAGS}
-    -e "$ELF=@$<TARGET_FILE:mytest>; include @${CMAKE_SOURCE_DIR}/test/simulate.resc; start"
+    -e "$ELF=@$<TARGET_FILE:mytest>; $WORKING=@${CMAKE_SOURCE_DIR}; include @${CMAKE_SOURCE_DIR}/test/simulate.resc; start"
     )
+
+add_custom_target(flash_test picotool load -f $<TARGET_FILE:mytest> DEPENDS mytest)
